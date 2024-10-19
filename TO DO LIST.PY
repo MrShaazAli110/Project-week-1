@@ -1,71 +1,53 @@
-def display_menu():  #making a Main Memu where we will going to select with task to perform.
-    print("Menu:")
-    print("1. Add Task")
-    print("2. View Tasks")
-    print("3. Mark as Done")
-    print("4. Exit")
+tasks = []
 
-def add_task(tasks):  #Opiton to add new task
-    task = input("Enter Task Description: ")
-    tasks.append(task)
-    print("Task added Successsfuly! ")
+def add_task(task_name):
+    tasks.append({"name": task_name, "completed": False})
 
-
-def view_tasks(tasks): #Viewing the New task's or existing ones.
-    print("\nTasks: ")
-    for i,task in enumerate(tasks, start=1):
-        print(f"{1}. {task}")
-
-
-def mark_task_done(tasks):  #After the task has been Completed then remove the task's
+def view_tasks():
     if not tasks:
-        print("No tasks to mark as done")
-        return
-    
-    view_tasks(tasks)    #display then remove the task!
-    index = int(input("Enter task index to mark as done: ")) -1
-
-    if 0 <= index < len(tasks): #for deleting the index  value's and the index values is going to be in only 1 in the value we gotta use name to remove it!
-        removed_task = tasks.pop(index)
-        print(f"Task'{removed_task}' marked as done and removed. ")
+        print("No tasks in the to-do list.")
     else:
-        print("Invalid task index. ")
+        for i, task in enumerate(tasks):
+            status = "Completed" if task["completed"] else "Not Completed"
+            print(f"{i + 1}. {task['name']} - {status}")
 
-def save_tasks(tasks):
-    with open("tasks.txt","w") as f:
-        for task in tasks:
-            f.write(task + '\n')
+def mark_as_completed(task_index):
+    if 0 <= task_index < len(tasks):
+        tasks[task_index]["completed"] = True
 
-def load_tasks():
-    try:
-        with open("tasks.txt","r") as f:
-            return
-        f.read().splitlines()
-    except FileNotFoundError:
-        return []
-    
-    
+def remove_task(task_index):
+    if 0 <= task_index < len(tasks):
+        del tasks[task_index]
 
-def main():
-    tasks = load_tasks() #Initialize an empty list to store tasks
+while True:
+    print("\nTO-DO LIST MENU:")
+    print("1. Add a task")
+    print("2. View tasks")
+    print("3. Mark a task as completed")
+    print("4. Remove a task")
+    print("5. Quit")
 
+    choice = input("Enter your choice: ")
 
-    while True:
-        display_menu()
+    if choice == "1":
+        task_name = input("Enter the task name: ")
+        add_task(task_name)
+        print("Task added successfully.")
 
-        choice = input("Enter Your Choice: ")
+    elif choice == "2":
+        view_tasks()
 
-        if choice == '1':
-            add_task(tasks)
-        elif choice == '2':
-            view_tasks(tasks)
-        elif choice == '3':
-            mark_task_done(tasks)
-        elif choice == '4':
-            print("Exiting.")
-            break
-        else:
-            print("Invalid choice. Please select a valid option.")
-if __name__ == "__main__":
-    main()
-    
+    elif choice == "3":
+        view_tasks()
+        task_index = int(input("Enter the task number to mark as completed: ")) - 1
+        mark_as_completed(task_index)
+        print("Task marked as completed.")
+
+    elif choice == "4":
+        view_tasks()
+        task_index = int(input("Enter the task number to remove: ")) - 1
+        remove_task(task_index)
+        print("Task removed successfully.")
+
+    elif choice == "5":
+        print("Goodbye!")
